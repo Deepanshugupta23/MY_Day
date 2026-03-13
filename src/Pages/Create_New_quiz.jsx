@@ -84,32 +84,63 @@ const editIndex = location.state?.quizIndex;
 
  // Save all question types properly
 const saveQuestions = () => {
+
+ 
+  // Prevent empty quiz
+  if (!questions || questions.length === 0) {
+    alert("Please add at least one question.");
+    return;
+  }
+
+  for (let q of questions) {
+
+    if (!q.question.trim()) {
+      alert("Question cannot be empty.");
+      return;
+    }
+
+    if (q.type === "mcq-single" || q.type === "mcq-multi") {
+
+      if (q.options.length < 2) {
+        alert("Please add at least 2 options.");
+        return;
+      }
+
+      if (q.type === "mcq-single" && q.correctAnswer === "") {
+        alert("Please select the correct answer.");
+        return;
+      }
+
+      if (q.type === "mcq-multi" && (!q.correctAnswer || q.correctAnswer.length === 0)) {
+        alert("Please select at least one correct answer.");
+        return;
+      }
+
+    }
+
+    if ((q.type === "short" || q.type === "description") && !q.answerText.trim()) {
+      alert("Answer cannot be empty.");
+      return;
+    }
+
+  }
+
+  // 👉 YAHAN ADD HOGA
   const existing = JSON.parse(localStorage.getItem("quizzes")) || [];
 
-  const quizObject = {
-    id: editQuiz?.id || Date.now(),
-    quizTitle:
-      selectedType === "mcq-single" || selectedType === "mcq-multi"
-        ? quizTitle.trim()
-        : selectedType === "short"
-        ? "Short Questions Answers"
-        : "Description Type Questions",
-    createdAt: editQuiz?.createdAt || new Date().toLocaleDateString(),
-    status: editQuiz?.status || "Active",
-    type: selectedType,
-    questions: questions.map(q => {
-      if (q.type === "mcq-single") return { ...q, correctAnswer: q.correctAnswer ?? null };
-      if (q.type === "mcq-multi") return { ...q, correctAnswer: q.correctAnswer ?? [] };
-      return { ...q, answerText: q.answerText?.trim() ?? "" };
-    }),
-  };
+  const newQuiz = {
+  quizTitle: quizTitle,
+  type: selectedType,
+  questions: questions,
+  status: "Inactive",
+  createdAt: new Date().toLocaleDateString()
+};
 
-  let updatedQuizzes = editIndex !== undefined && editIndex !== null
-    ? [...existing.slice(0, editIndex), quizObject, ...existing.slice(editIndex + 1)]
-    : [...existing, quizObject];
+existing.push(newQuiz);
 
-  localStorage.setItem("quizzes", JSON.stringify(updatedQuizzes));
-  setShowSuccessModal(true);
+localStorage.setItem("quizzes", JSON.stringify(existing));
+
+setShowSuccessModal(true);
 };
   const getHeading = () => {
   if (selectedType === "mcq-single" || selectedType === "mcq-multi") {
@@ -125,11 +156,11 @@ const saveQuestions = () => {
 };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-100 p-4 md:p-8">
       {/* TYPE MODAL */}
       {showTypeModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white p-8 rounded-2xl w-[400px] shadow-xl">
+          <div className="bg-white p-8 rounded-2xl w-full max-w-md shadow-xl">
             <h2 className="text-2xl font-bold mb-6 text-center">
               Select Question Type
             </h2>
@@ -347,7 +378,7 @@ const saveQuestions = () => {
       {/* SUCCESS MODAL */}
       {showSuccessModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white p-8 rounded-2xl w-[350px] text-center shadow-xl">
+          <div className="bg-white p-8 rounded-2xl w-full max-w-sm text-center shadow-xl">
             <h2 className="text-xl font-bold mb-4">
   {editIndex !== undefined
     ? "Quiz updated successfully"

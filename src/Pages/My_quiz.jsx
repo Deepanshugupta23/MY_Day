@@ -9,17 +9,17 @@ function My_quiz() {
 
   // LOAD FROM LOCALSTORAGE
   useEffect(() => {
-  const loadData = () => {
-    const data = JSON.parse(localStorage.getItem("quizzes")) || [];
-    setQuizzes(data);
-  };
+    const loadData = () => {
+      const data = JSON.parse(localStorage.getItem("quizzes")) || [];
+      setQuizzes(data);
+    };
 
-  loadData();
+    loadData();
 
-  window.addEventListener("focus", loadData);
+    window.addEventListener("focus", loadData);
 
-  return () => window.removeEventListener("focus", loadData);
-}, []);
+    return () => window.removeEventListener("focus", loadData);
+  }, []);
 
   // UPDATE STORAGE
   const updateStorage = (updated) => {
@@ -51,121 +51,142 @@ function My_quiz() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
+
       <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-lg">
 
         <h2 className="text-2xl font-bold text-center mb-6">
           My Quizzes
         </h2>
 
-        <table className="w-full border border-gray-300 text-center">
-          <thead className="bg-indigo-600 text-white">
-            <tr>
-              <th className="border p-2">Quiz Title</th>
-              <th className="border p-2">Status</th>
-              <th className="border p-2">Created Date</th>
-              <th className="border p-2">Total Questions</th>
-               <th className="border p-2">Quiz Type</th> 
-              
-              
-              <th className="border p-2">Actions</th>
-            </tr>
-          </thead>
+        {/* TABLE SCROLL FIX */}
+        <div className="overflow-x-auto">
 
-          <tbody>
-            {quizzes.length === 0 && (
+          <table className="w-full border border-gray-300 text-center">
+
+            <thead className="bg-indigo-600 text-white">
               <tr>
-                <td colSpan="6" className="p-4">
-                  No quizzes found
-                </td>
+                <th className="border p-2">Quiz Title</th>
+                <th className="border p-2">Status</th>
+                <th className="border p-2">Created Date</th>
+                <th className="border p-2">Total Questions</th>
+                <th className="border p-2">Quiz Type</th>
+                <th className="border p-2">Actions</th>
               </tr>
-            )}
+            </thead>
 
-            {quizzes.map((quiz, index) => (
-              <tr key={index}>
+            <tbody>
 
-                {/* TITLE */}
-                <td
-                  className="border p-2 cursor-pointer text-blue-600"
-                  onClick={() =>
-                    setEditData({ index, data: { ...quiz } })
-                  }
-                >
-                  {quiz.quizTitle}
-                </td>
+              {quizzes.length === 0 && (
+                <tr>
+                  <td colSpan="6" className="p-4">
+                    No quizzes found
+                  </td>
+                </tr>
+              )}
 
-                {/* STATUS */}
-                <td className="border p-2">
-                  <label className="mr-3">
-                    <input
-                      type="radio"
-                      checked={quiz.status === "Active"}
-                      onChange={() =>
-                        toggleStatus(index, "Active")
-                      }
-                    />
-                    Active
-                  </label>
+              {quizzes.map((quiz, index) => (
 
-                  <label>
-                    <input
-                      type="radio"
-                      checked={quiz.status === "Inactive"}
-                      onChange={() =>
-                        toggleStatus(index, "Inactive")
-                      }
-                    />
-                    Inactive
-                  </label>
-                </td>
+                <tr key={index}>
 
-                {/* DATE */}
-                <td className="border p-2">
-                  {quiz.createdAt}
-                </td>
-
-                {/* TOTAL QUESTIONS */}
-                <td className="border p-2">
-                  {quiz.questions?.length || 0}
-                </td>
-                {/* QUIZ TYPE */}
-<td className="border p-2">
-  {quiz.type === "mcq-single" && "MCQ (Single Correct)"}
-  {quiz.type === "mcq-multi" && "MCQ (Multiple Correct)"}
-  {quiz.type === "short" && "Short Answer"}
-  {quiz.type === "description" && "Description"}
-</td>
-
-                {/* ACTIONS */}
-                <td className="border p-2 space-x-2">
-                  <button
-  onClick={() =>
-    navigate("/Create_New_quiz", {
-      state: { quizData: quiz, quizIndex: index }
-    })
-  }
-  className="bg-yellow-500 text-white px-3 py-1 rounded"
->
-  Edit
-</button>
-
-                  <button
-                    onClick={() => setDeleteIndex(index)}
-                    className="bg-red-600 text-white px-3 py-1 rounded"
+                  {/* TITLE */}
+                  <td
+                    className="border p-2 cursor-pointer text-blue-600"
+                    onClick={() =>
+                      setEditData({ index, data: { ...quiz } })
+                    }
                   >
-                    Delete
-                  </button>
-                </td>
+                    {quiz.quizTitle}
+                  </td>
 
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  {/* STATUS */}
+                  <td className="border p-2">
+
+                    <label className="mr-3">
+                      <input
+                        type="radio"
+                        checked={quiz.status === "Active"}
+                        onChange={() =>
+                          toggleStatus(index, "Active")
+                        }
+                      />
+                      Active
+                    </label>
+
+                    <label>
+                      <input
+                        type="radio"
+                        checked={quiz.status === "Inactive"}
+                        onChange={() =>
+                          toggleStatus(index, "Inactive")
+                        }
+                      />
+                      Inactive
+                    </label>
+
+                  </td>
+
+                  {/* DATE */}
+                  <td className="border p-2">
+                    {quiz.createdAt}
+                  </td>
+
+                  {/* TOTAL QUESTIONS */}
+                  <td className="border p-2">
+                    {quiz.questions?.length || 0}
+                  </td>
+
+                  {/* QUIZ TYPE */}
+                  <td className="border p-2">
+
+                    {quiz.type === "mcq-single" && "MCQ (Single Correct)"}
+                    {quiz.type === "mcq-multi" && "MCQ (Multiple Correct)"}
+                    {quiz.type === "short" && "Short Answer"}
+                    {quiz.type === "description" && "Description"}
+
+                  </td>
+
+                  {/* ACTIONS */}
+                  <td className="border p-2 space-x-2">
+
+                    <button
+                      onClick={() =>
+                        navigate("/Create_New_quiz", {
+                          state: { quizData: quiz, quizIndex: index }
+                        })
+                      }
+                      className="bg-yellow-500 text-white px-3 py-1 rounded"
+                    >
+                      Edit
+                    </button>
+
+                    <button
+                      onClick={() => setDeleteIndex(index)}
+                      className="bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
       </div>
 
       {/* EDIT MODAL */}
       {editData && (
+
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white p-6 rounded-xl w-96">
+
+          <div className="bg-white p-6 rounded-xl w-full max-w-md">
+
             <h2 className="text-xl font-bold mb-4">
               Edit Quiz Title
             </h2>
@@ -186,6 +207,7 @@ function My_quiz() {
             />
 
             <div className="flex justify-end gap-3">
+
               <button
                 onClick={() => setEditData(null)}
                 className="bg-gray-400 text-white px-4 py-1 rounded"
@@ -199,20 +221,28 @@ function My_quiz() {
               >
                 Save
               </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
 
       {/* DELETE MODAL */}
       {deleteIndex !== null && (
+
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white p-6 rounded-xl w-80 text-center">
+
+          <div className="bg-white p-6 rounded-xl w-full max-w-sm text-center">
+
             <h2 className="text-lg font-bold mb-4">
               Are you sure you want to delete?
             </h2>
 
             <div className="flex justify-center gap-4">
+
               <button
                 onClick={confirmDelete}
                 className="bg-red-600 text-white px-4 py-1 rounded"
@@ -226,9 +256,13 @@ function My_quiz() {
               >
                 No
               </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
 
     </div>

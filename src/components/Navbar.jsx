@@ -4,10 +4,10 @@ import { NavLink } from "react-router-dom";
 function Navbar({userName}) {
   return (
     <nav className="bg-white shadow-md px-8 py-4">
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
+      <div className="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-4">
         <h1 className="text-2xl font-bold text-indigo-600">QuizApp</h1>
 
-        <div className="flex items-center gap-8">
+        <div className="flex flex-wrap items-center gap-4">
           <NavLink
             to="/"
             className={({ isActive }) =>

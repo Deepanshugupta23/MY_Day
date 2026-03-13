@@ -8,6 +8,7 @@ function play({ setUserName }) {
   const [current, setCurrent] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [userAnswers, setUserAnswers] = useState([]);
+  const [nameError, setNameError] = useState("");
   
   // Step 1: Store all active quizzes
   const [activeQuizzes, setActiveQuizzes] = useState([]);
@@ -63,6 +64,9 @@ function play({ setUserName }) {
           placeholder="Full Name"
           className="border p-2 rounded w-64"
         />
+        {nameError && (
+  <p className="text-red-500 text-sm mt-2">{nameError}</p>
+)}
         <br />
 
         {/* Step 3: Dropdown if multiple active quizzes */}
@@ -82,11 +86,16 @@ function play({ setUserName }) {
         )}
 
         <button
-          onClick={() => {
-            if (!name.trim()) return;
-            setUserName(name);
-            setStarted(true);
-          }}
+  onClick={() => {
+    if (!name.trim()) {
+      setNameError("Please enter your name");
+      return;
+    }
+
+    setNameError("");
+    setUserName(name.trim());
+    setStarted(true);
+  }}
           className="bg-indigo-600 text-white px-6 py-2 mt-4 rounded"
         >
           Start Quiz
@@ -175,7 +184,7 @@ function play({ setUserName }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-6">
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4 md:p-6">
       <div className="bg-white w-full max-w-2xl p-8 rounded-2xl shadow-xl relative">
         <p className="text-lg font-medium mb-6">{q.question}</p>
 
